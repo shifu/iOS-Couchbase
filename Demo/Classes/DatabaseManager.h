@@ -45,5 +45,6 @@ typedef void (^DatabaseManagerErrorHandler)(id error);
 - (void) recreateDatabaseOnSuccess:(CouchDBSuccessHandler) success onError:(CouchDBFailureHandler)error;
 -(void)syncFrom:(NSString *)from to:(NSString *)to onSuccess:(DatabaseManagerSuccessHandler)success onError:(DatabaseManagerErrorHandler) error;
 -(void)deleteDocument:(CCouchDBDocument *)inDocument;
+-(id)init:(NSURL *)dbURL;
 -(id)init:(NSURL *)dbURL dbName:(NSString*)name;
 @end

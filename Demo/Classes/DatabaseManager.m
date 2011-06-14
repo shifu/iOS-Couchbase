@@ -48,7 +48,9 @@ static DatabaseManager *sharedManager;
 	}
 	return sharedManager;
 }
-
+-(id)init:(NSURL *)dbURL{
+    return [self init:dbURL dbName:DATABASE_NAME];
+}
 -(id)init:(NSURL *)dbURL dbName:(NSString*)name
 {
 	[super init];
