@@ -32,20 +32,28 @@ static DatabaseManager *sharedManager;
 @synthesize database;
 @synthesize delegate;
 @synthesize connections;
+@synthesize server;
 
 +(DatabaseManager *)sharedManager:(NSURL *)dbURL
 {
 	if(sharedManager == nil) {
-		sharedManager = [[DatabaseManager alloc] init: dbURL];
+		sharedManager = [[DatabaseManager alloc] init: dbURL dbName:DATABASE_NAME];
 	}
 	return sharedManager;
 }
 
--(id)init:(NSURL *)dbURL
++ (DatabaseManager*) sharedManager:(NSURL *)dbURL dbName:(NSString*)name{
+    if(sharedManager == nil) {
+		sharedManager = [[DatabaseManager alloc] init: dbURL dbName:name];
+	}
+	return sharedManager;
+}
+
+-(id)init:(NSURL *)dbURL dbName:(NSString*)name
 {
 	[super init];
 	server = [[CCouchDBServer alloc] initWithSession:NULL URL:dbURL];
-	database = [[server databaseNamed:DATABASE_NAME] retain];
+	database = [[server databaseNamed:name] retain];
 	connections = [[NSMutableDictionary alloc] init];
 	return self;
 }
@@ -115,5 +123,17 @@ static DatabaseManager *sharedManager;
 	[server release];
 	[connections release];
     [super dealloc];
+}
+- (void) recreateDatabaseOnSuccess:(CouchDBSuccessHandler) success onError:(CouchDBFailureHandler)error{
+    CouchDBSuccessHandler dsuccess = ^(id inParam){
+        // delete succeeded.  Create a new database.
+        CURLOperation *newOp = [server operationToCreateDatabaseNamed:DATABASE_NAME withSuccessHandler:success failureHandler:error];
+        [newOp start];
+    };
+    CouchDBFailureHandler derror = ^(NSError *err){
+        error(err);
+    };
+    CURLOperation *op = [server operationToDeleteDatabase:database withSuccessHandler:dsuccess failureHandler:derror];
+    [op start];
 }
 @end

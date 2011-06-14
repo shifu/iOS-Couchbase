@@ -20,6 +20,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CCouchDBDocument.h"
+#import "CouchDBClientTypes.h"
 
 typedef void (^DatabaseManagerSuccessHandler)();
 typedef void (^DatabaseManagerErrorHandler)(id error);
@@ -33,12 +34,16 @@ typedef void (^DatabaseManagerErrorHandler)(id error);
 	NSMutableDictionary *connections;
 	id delegate;
 }
-
+@property (readonly) CCouchDBServer *server;
 @property(readonly)CCouchDBDatabase *database;
 @property(assign) id delegate;
 @property(assign) NSMutableDictionary *connections;
++(DatabaseManager *)sharedManager:(NSURL *)dbURL dbName:(NSString*)name;
 +(DatabaseManager *)sharedManager:(NSURL *)dbURL;
+
+// delete and recreate the database
+- (void) recreateDatabaseOnSuccess:(CouchDBSuccessHandler) success onError:(CouchDBFailureHandler)error;
 -(void)syncFrom:(NSString *)from to:(NSString *)to onSuccess:(DatabaseManagerSuccessHandler)success onError:(DatabaseManagerErrorHandler) error;
 -(void)deleteDocument:(CCouchDBDocument *)inDocument;
--(id)init:(NSURL *)dbURL;
+-(id)init:(NSURL *)dbURL dbName:(NSString*)name;
 @end
