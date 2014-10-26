@@ -34,10 +34,12 @@ typedef void (^DatabaseManagerErrorHandler)(id error);
 	NSMutableDictionary *connections;
 	id delegate;
 }
-@property (readonly) CCouchDBServer *server;
-@property(readonly)CCouchDBDatabase *database;
-@property(assign) id delegate;
-@property(assign) NSMutableDictionary *connections;
+
+@property (nonatomic, readonly) CCouchDBServer *server;
+@property (nonatomic, readonly)CCouchDBDatabase *database;
+@property (nonatomic, weak) id delegate;
+@property (nonatomic, retain) NSMutableDictionary *connections;
+
 +(DatabaseManager *)sharedManager:(NSURL *)dbURL dbName:(NSString*)name;
 +(DatabaseManager *)sharedManager:(NSURL *)dbURL;
 
